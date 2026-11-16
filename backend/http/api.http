@@ -1,0 +1,253 @@
+@baseUrl = http://localhost:3000/api
+# Captura automática del token luego de ejecutar la petición de Login
+@token = {{login.response.body.token}}
+
+### ============================
+### 1. AUTENTICACIÓN (USUARIOS)
+### ============================
+### Registrar un nuevo usuario
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{
+    "nombre": "Bruno Admin",
+    "email": "bruno@transporte.com",
+    "password": "password123"
+}
+
+### Iniciar sesión (Ejecutar esta petición para cargar la variable @token)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "bruno@transporte.com",
+    "password": "password123"
+}
+
+### Prueba de error: Registro con datos inválidos (express-validator)
+POST {{baseUrl}}/auth/registro
+Content-Type: application/json
+
+{
+    "nombre": "B",
+    "email": "correo-invalido",
+    "password": "123"
+}
+
+
+### ==============
+### CONDUCTORES 
+### ==============
+
+### Crear Conductor 1
+POST {{baseUrl}}/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Carlos",
+    "apellido": "Gómez",
+    "dni": "35123456",
+    "licencia": "LNH-00123",
+    "fecha_alta_licencia": "2023-05-10",
+    "fecha_vencimiento_licencia": "2028-05-10"
+}
+
+### Crear Conductor siguiente
+POST {{baseUrl}}/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Martín",
+    "apellido": "Herrera",
+    "dni": "38654321",
+    "licencia": "LNH-00456",
+    "fecha_alta_licencia": "2024-01-15",
+    "fecha_vencimiento_licencia": "2029-01-15"
+}
+
+### Obtener todos los conductores
+GET {{baseUrl}}/conductores
+Authorization: Bearer {{token}}
+
+### Obtener un conductor por ID
+GET {{baseUrl}}/conductores/1
+Authorization: Bearer {{token}}
+
+### Actualizar un conductor
+PUT {{baseUrl}}/conductores/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Carlos Alberto",
+    "apellido": "Gómez",
+    "dni": "35123456",
+    "licencia": "LNH-00123",
+    "fecha_alta_licencia": "2023-05-10",
+    "fecha_vencimiento_licencia": "2029-05-10"
+}
+
+### Prueba de validación: Fecha de vencimiento anterior a fecha de alta
+POST {{baseUrl}}/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Pedro",
+    "apellido": "López",
+    "dni": "40111222",
+    "licencia": "LNH-00999",
+    "fecha_alta_licencia": "2025-10-10",
+    "fecha_vencimiento_licencia": "2024-10-10"
+}
+
+### Eliminar un conductor
+DELETE {{baseUrl}}/conductores/2
+Authorization: Bearer {{token}}
+
+
+### ============
+### VEHÍCULOS
+### ============
+
+### Crear Vehículo 1
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Scania",
+    "modelo": "R450",
+    "patente": "AF123BC",
+    "anio": 2022,
+    "capacidad_carga": 28500.50
+}
+
+### Crear Vehículo siguiente
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Mercedes-Benz",
+    "modelo": "Actros 2045",
+    "patente": "AE987ZY",
+    "anio": 2021,
+    "capacidad_carga": 25000
+}
+
+### Obtener todos los vehículos
+GET {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+
+### Obtener un vehículo por ID
+GET {{baseUrl}}/vehiculos/1
+Authorization: Bearer {{token}}
+
+### Actualizar un vehículo
+PUT {{baseUrl}}/vehiculos/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Scania",
+    "modelo": "R450 Streamline",
+    "patente": "AF123BC",
+    "anio": 2023,
+    "capacidad_carga": 30000
+}
+
+### Prueba de error: Patente duplicada
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Iveco",
+    "modelo": "Stralis",
+    "patente": "AF123BC",
+    "anio": 2020,
+    "capacidad_carga": 20000
+}
+
+### Eliminar un vehículo
+DELETE {{baseUrl}}/vehiculos/2
+Authorization: Bearer {{token}}
+
+
+### ========== ###
+### VIAJES     ###
+### ========== ###
+### Crear Viaje 1 (Vincula Vehículo 1 y Conductor 1)
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculo_id": 1,
+    "conductor_id": 1,
+    "fecha_salida": "2026-11-16T08:00:00",
+    "fecha_llegada": "2026-11-16T14:30:00",
+    "origen": "La Rioja Capital",
+    "destino": "Córdoba Capital",
+    "kilometros": 430.5,
+    "observaciones": "Entrega de mercadería general sin inconvenientes"
+}
+
+### Crear Viaje 2 (Sin observaciones opcionales)
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculo_id": 1,
+    "conductor_id": 1,
+    "fecha_salida": "2026-11-17T06:00:00",
+    "fecha_llegada": "2026-11-17T12:00:00",
+    "origen": "Córdoba Capital",
+    "destino": "Rosario",
+    "kilometros": 405
+}
+
+###  Obtener todos los viajes (Incluye datos de Vehículo y Conductor por JOIN)
+GET {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+
+### Filtrar viajes por vehículo (?vehiculo_id=1)
+GET {{baseUrl}}/viajes?vehiculo_id=1
+Authorization: Bearer {{token}}
+
+### Filtrar viajes por conductor (?conductor_id=1)
+GET {{baseUrl}}/viajes?conductor_id=1
+Authorization: Bearer {{token}}
+
+### Obtener un viaje por ID
+GET {{baseUrl}}/viajes/1
+Authorization: Bearer {{token}}
+
+### Actualizar un viaje
+PUT {{baseUrl}}/viajes/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculo_id": 1,
+    "conductor_id": 1,
+    "fecha_salida": "2026-11-16T08:00:00",
+    "fecha_llegada": "2026-11-16T15:00:00",
+    "origen": "La Rioja Capital",
+    "destino": "Córdoba Capital",
+    "kilometros": 435.0,
+    "observaciones": "Demora de 30 min en control caminero"
+}
+
+### 4.8 Prueba de integridad referencial: Intentar borrar Conductor 1 con viajes asignados
+DELETE {{baseUrl}}/conductores/1
+Authorization: Bearer {{token}}
+
+### 4.9 Eliminar un viaje
+DELETE {{baseUrl}}/viajes/2
+Authorization: Bearer {{token}}

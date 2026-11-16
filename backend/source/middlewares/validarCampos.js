@@ -1,12 +1,5 @@
 import { param, validationResult } from 'express-validator';
 
-export const validarId = [
-    param('id')
-        .isInt({ min: 1 })
-        .withMessage('El ID debe ser un número positivo'),
-    validarCampos
-];
-
 export const validarCampos = (req, res, next) => {
     const errores = validationResult(req);
 
@@ -24,3 +17,10 @@ export const validarCampos = (req, res, next) => {
 
     next();
 };
+
+export const validarId = [
+    param('id')
+        .isInt({ min: 1 })
+        .withMessage('El ID debe ser un número positivo'),
+    validarCampos
+];
