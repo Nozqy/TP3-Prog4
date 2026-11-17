@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `transporte_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `transporte_db`;
+CREATE DATABASE  IF NOT EXISTS `alquilerdeautos` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `alquilerdeautos`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
--- Host: localhost    Database: transporte_db
+-- Host: localhost    Database: alquilerdeautos
 -- ------------------------------------------------------
 -- Server version	26.7.0
 

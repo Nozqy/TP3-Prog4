@@ -244,10 +244,22 @@ Content-Type: application/json
     "observaciones": "Demora de 30 min en control caminero"
 }
 
-### 4.8 Prueba de integridad referencial: Intentar borrar Conductor 1 con viajes asignados
+### Prueba de integridad referencial: Intentar borrar conductor 1 con viajes asignados
 DELETE {{baseUrl}}/conductores/1
 Authorization: Bearer {{token}}
 
-### 4.9 Eliminar un viaje
+### Eliminar un viaje
 DELETE {{baseUrl}}/viajes/2
+Authorization: Bearer {{token}}
+
+### =================================
+### REPORTES Y KILÓMETROS TOTALES
+### =================================
+
+### Obtener historial de viajes y total de kilómetros del Vehículo 1
+GET {{baseUrl}}/viajes/vehiculo/1
+Authorization: Bearer {{token}}
+
+### Obtener historial de viajes y total de kilómetros del Conductor 1
+GET {{baseUrl}}/viajes/conductor/1
 Authorization: Bearer {{token}}

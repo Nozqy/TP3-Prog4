@@ -17,7 +17,7 @@ export const configurarPassport = (passport) => {
                 );
 
                 if (rows.length > 0) {
-                    return done(null, rows[0]); // Lo guarda en req.user
+                    return done(null, rows[0]);
                 }
                 return done(null, false);
             } catch (error) {

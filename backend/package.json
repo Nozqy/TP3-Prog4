@@ -1,9 +1,12 @@
 {
   "name": "tp3",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Sistema de gestión de transporte -TP3",
+  "main": "source/index.js",
+  "type": "module",
   "scripts": {
+    "start": "node source/index.js",
+    "dev": "nodemon source/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,7 +16,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Nozqy/TP3-Prog4/issues"
   },
