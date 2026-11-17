@@ -245,3 +245,93 @@ export const eliminarViaje = async (req, res) => {
         res.status(500).json({ ok: false, mensaje: 'Error al eliminar el viaje' });
     }
 };
+
+// Obtener historial de viajes y total de kilómetros de un vehículo específico
+export const obtenerResumenPorVehiculo = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // 1. Verificar que el vehículo exista
+        const [vehiculo] = await pool.query('SELECT * FROM vehiculos WHERE id = ?', [id]);
+        if (vehiculo.length === 0) {
+            return res.status(404).json({
+                ok: false,
+                mensaje: 'Vehículo no encontrado'
+            });
+        }
+
+        // Calcular total de kilómetros y cantidad de viajes
+        const [estadisticas] = await pool.query(
+            `SELECT 
+                COUNT(id) AS cantidad_viajes,
+                COALESCE(SUM(kilometros), 0) AS total_kilometros
+             FROM viajes 
+             WHERE vehiculo_id = ?`,
+            [id]
+        );
+
+        // Obtener el listado de viajes de ese vehículo con datos del conductor
+        const [viajes] = await pool.query(
+            `${SELECT_VIAJES_JOIN} WHERE v.vehiculo_id = ? ORDER BY v.fecha_salida DESC`,
+            [id]
+        );
+
+        res.json({
+            ok: true,
+            vehiculo: vehiculo[0],
+            resumen: {
+                cantidad_viajes: estadisticas[0].cantidad_viajes,
+                total_kilometros: Number(estadisticas[0].total_kilometros)
+            },
+            viajes
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ ok: false, mensaje: 'Error al obtener el resumen por vehículo' });
+    }
+};
+
+// Obtener historial de viajes y total de kilómetros de un conductor específico
+export const obtenerResumenPorConductor = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Verificar que el conductor exista
+        const [conductor] = await pool.query('SELECT * FROM conductores WHERE id = ?', [id]);
+        if (conductor.length === 0) {
+            return res.status(404).json({
+                ok: false,
+                mensaje: 'Conductor no encontrado'
+            });
+        }
+
+        // Calcular total de kilómetros y cantidad de viajes
+        const [estadisticas] = await pool.query(
+            `SELECT 
+                COUNT(id) AS cantidad_viajes,
+                COALESCE(SUM(kilometros), 0) AS total_kilometros
+             FROM viajes 
+             WHERE conductor_id = ?`,
+            [id]
+        );
+
+        // Obtener el listado de viajes de ese conductor con datos del vehículo
+        const [viajes] = await pool.query(
+            `${SELECT_VIAJES_JOIN} WHERE v.conductor_id = ? ORDER BY v.fecha_salida DESC`,
+            [id]
+        );
+
+        res.json({
+            ok: true,
+            conductor: conductor[0],
+            resumen: {
+                cantidad_viajes: estadisticas[0].cantidad_viajes,
+                total_kilometros: Number(estadisticas[0].total_kilometros)
+            },
+            viajes
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ ok: false, mensaje: 'Error al obtener el resumen por conductor' });
+    }
+};
